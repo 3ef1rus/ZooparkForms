@@ -54,7 +54,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comboBoxTables = new System.Windows.Forms.ComboBox();
             this.zooparkDataSet = new ZooparkForms.zooparkDataSet();
             this.zooparkDataSetBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.label11 = new System.Windows.Forms.Label();
@@ -276,10 +276,10 @@
             this.label10.TabIndex = 24;
             this.label10.Text = "Поиск";
             // 
-            // comboBox1
+            // comboBoxTables
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
+            this.comboBoxTables.FormattingEnabled = true;
+            this.comboBoxTables.Items.AddRange(new object[] {
             "ZooparkForTrade",
             "Suppliers",
             "Vaccinations",
@@ -304,11 +304,12 @@
             "EmployeeHistory",
             "Users",
             "Admins"});
-            this.comboBox1.Location = new System.Drawing.Point(1190, 472);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
-            this.comboBox1.TabIndex = 25;
-            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            this.comboBoxTables.Location = new System.Drawing.Point(1190, 472);
+            this.comboBoxTables.Name = "comboBoxTables";
+            this.comboBoxTables.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxTables.TabIndex = 25;
+            this.comboBoxTables.Text = "Employee";
+            this.comboBoxTables.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
             // 
             // zooparkDataSet
             // 
@@ -335,7 +336,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1346, 680);
             this.Controls.Add(this.label11);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.comboBoxTables);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.textBox2);
@@ -399,7 +400,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox comboBoxTables;
         private zooparkDataSet zooparkDataSet;
         private System.Windows.Forms.BindingSource zooparkDataSetBindingSource;
         private System.Windows.Forms.Label label11;

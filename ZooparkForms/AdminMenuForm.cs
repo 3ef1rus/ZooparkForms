@@ -9,7 +9,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Schema;
 using zoopark;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar;
 
 namespace ZooparkForms
 {
@@ -27,6 +29,7 @@ namespace ZooparkForms
     public partial class AdminMenuForm : Form
     {
         Database database=new Database();
+        Database databaseClone = new Database();
 
         int selectedRow;
         public AdminMenuForm()
@@ -36,34 +39,96 @@ namespace ZooparkForms
 
         private void CreateColumns()
         {
-            dataGridView1.Columns.Add("employeeID", "id работника");
-            dataGridView1.Columns.Add("Full name", "ФИО");
-            dataGridView1.Columns.Add("Salarity", "Зарплата");
-            dataGridView1.Columns.Add("Sex", "Пол");
-            dataGridView1.Columns.Add("Age", "Возраст");
-            dataGridView1.Columns.Add("Experience", "Стаж работы");
-            dataGridView1.Columns.Add("jobID", "id должности");
-            dataGridView1.Columns.Add("IsNew", String.Empty);
+            dataGridView1.Refresh();
+            dataGridView1.Rows.Clear();  // удаление всех строк
+            int count = dataGridView1.Columns.Count;
+            for (int i = 0; i < count; i++)     // цикл удаления всех столбцов
+            {
+                dataGridView1.Columns.RemoveAt(0);
+            }
+
+            var table = comboBoxTables.Text;
+            string quaryColumnName = $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'";
+            SqlCommand command = new SqlCommand(quaryColumnName, databaseClone.getConnection());
+
+                databaseClone.openConnection();
+
+
+                SqlDataReader reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+
+                    dataGridView1.Columns.Add("", reader.GetString(0));
+                }
+
+                dataGridView1.Columns.Add("IsNew", String.Empty);
+                reader.Close();
+
+                databaseClone.closeConnection();
+            
+            
         }
 
         private void ReadSingleRow(DataGridView dgw, IDataRecord record) 
         {
-            dgw.Rows.Add(record.GetInt32(0), record.GetString(1), record.GetString(2),
-                         record.GetString(3), record.GetString(4), record.GetString(5),
-                         record.GetInt32(6),RowState.ModifiedNew);
+
+            int length = CountColumns();
+            string[] row1 = new string[length];
+            for (int i = 0;i<= length-1; i++)
+            {
+                try {
+                    row1.SetValue(record.GetString(i),i);
+                }
+                catch {
+                    row1.SetValue(record.GetInt32(i).ToString(), i);
+                        }
+                if (i == length)
+                {
+                    row1.SetValue(RowState.ModifiedNew, length);
+                    break;
+                }
+            }
+            dgw.Rows.Add(row1);
         }
 
+        private int CountColumns() 
+        {
+
+            var table = comboBoxTables.Text;
+
+            string quaryKolvo = $"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'";
+
+            SqlCommand command = new SqlCommand(quaryKolvo, databaseClone.getConnection());
+
+            databaseClone.openConnection();
+
+            int length;
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            reader.Read();
+
+            length = reader.GetInt32(0);
+
+            reader.Close();
+
+            databaseClone.closeConnection();
+
+            return length;
+        }
         private void RefreshDataGrid(DataGridView dgw)
         {
             dgw.Rows.Clear();
-
-            string quaryStr = $"select * from Employee";
+            var table = comboBoxTables.Text;
+            string quaryStr = $"select * from {table}";           
 
             SqlCommand command = new SqlCommand(quaryStr, database.getConnection());
-
+            
             database.openConnection();
 
             SqlDataReader reader= command.ExecuteReader();
+                                   
             while (reader.Read())
             {
                 ReadSingleRow(dgw, reader);
@@ -71,9 +136,10 @@ namespace ZooparkForms
             reader.Close();
             database.closeConnection();
         }
-
+        
         private void AdminMenuForm_Load(object sender, EventArgs e)
         {
+
             CreateColumns();
             RefreshDataGrid(dataGridView1);
 
@@ -86,6 +152,7 @@ namespace ZooparkForms
             if(e.RowIndex >=0)
             {
                 DataGridViewRow row= dataGridView1.Rows[selectedRow];
+
 
                   textBox_ID.Text = row.Cells[0].Value.ToString();
                   textBox_FIO.Text = row.Cells[1].Value.ToString();
@@ -100,6 +167,7 @@ namespace ZooparkForms
 
         private void bnt_refresh_Click(object sender, EventArgs e)
         {
+            CreateColumns();
             RefreshDataGrid(dataGridView1);
         }
 
@@ -235,7 +303,6 @@ namespace ZooparkForms
             Change();
             updateTable();
         }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
