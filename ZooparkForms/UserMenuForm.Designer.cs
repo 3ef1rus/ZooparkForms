@@ -39,6 +39,7 @@
             this.button1.TabIndex = 0;
             this.button1.Text = "Вы юзер";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // UserMenuForm
             // 
@@ -48,6 +49,7 @@
             this.Controls.Add(this.button1);
             this.Name = "UserMenuForm";
             this.Text = "Form1";
+            this.Load += new System.EventHandler(this.UserMenuForm_Load);
             this.ResumeLayout(false);
 
         }

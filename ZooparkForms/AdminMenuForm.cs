@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.Common;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
@@ -9,7 +10,9 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using zoopark;
+//using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace ZooparkForms
 {
@@ -27,43 +30,118 @@ namespace ZooparkForms
     public partial class AdminMenuForm : Form
     {
         Database database=new Database();
-
+        Database databaseClone = new Database();
+        List<Label> lables = new List<Label>();
+        List<TextBox> textBoxes = new List<TextBox>();
         int selectedRow;
         public AdminMenuForm()
         {
             InitializeComponent();
         }
 
+        private List<string> nameColumn()
+        {
+            var table = comboBoxTables.Text;
+            string quaryColumnName = $"SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'";
+            SqlCommand command = new SqlCommand(quaryColumnName, databaseClone.getConnection());
+            databaseClone.openConnection();
+           
+            List<string> name = new List<string>();
+
+            SqlDataReader reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+
+                name.Add( reader.GetString(0));
+            }
+            reader.Close();
+
+            databaseClone.closeConnection();
+
+            return name;
+        }
         private void CreateColumns()
         {
-            dataGridView1.Columns.Add("employeeID", "id работника");
-            dataGridView1.Columns.Add("Full name", "ФИО");
-            dataGridView1.Columns.Add("Salarity", "Зарплата");
-            dataGridView1.Columns.Add("Sex", "Пол");
-            dataGridView1.Columns.Add("Age", "Возраст");
-            dataGridView1.Columns.Add("Experience", "Стаж работы");
-            dataGridView1.Columns.Add("jobID", "id должности");
-            dataGridView1.Columns.Add("IsNew", String.Empty);
+            dataGridView1.Refresh();
+            dataGridView1.Rows.Clear();  // удаление всех строк
+            int count = dataGridView1.Columns.Count;
+            for (int i = 0; i < count; i++)     // цикл удаления всех столбцов
+            {
+                dataGridView1.Columns.RemoveAt(0);
+            }
+            List<string> name = nameColumn();
+
+            for (int i = 0; i < name.Count; i++)
+            {
+                dataGridView1.Columns.Add("", name[i]);
+            }
+                dataGridView1.Columns.Add("IsNew", "State");                                      
         }
 
-        private void ReadSingleRow(DataGridView dgw, IDataRecord record) 
+        private void ReadSingleRow(DataGridView dgw, IDataRecord record)
         {
-            dgw.Rows.Add(record.GetInt32(0), record.GetString(1), record.GetString(2),
-                         record.GetString(3), record.GetString(4), record.GetString(5),
-                         record.GetInt32(6),RowState.ModifiedNew);
+
+            int length = CountColumns();
+            object[] row1 = new object[length + 1];
+
+            for (int i = 0; i <= length - 1; i++)
+            {
+                try
+                {
+
+                    row1.SetValue(record.GetString(i), i);
+                }
+                catch
+                {
+                    row1.SetValue(record.GetInt32(i).ToString(), i);
+                }
+
+            }
+            row1.SetValue(RowState.ModifiedNew, length);
+            DataGridViewRow dataGridViewRow = new DataGridViewRow();
+            dataGridViewRow.CreateCells(dgw);
+            dataGridViewRow.SetValues(row1);
+            dgw.Rows.Add(dataGridViewRow);
+
         }
 
+        private int CountColumns() 
+        {
+
+            var table = comboBoxTables.Text;
+
+            string quaryKolvo = $"SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{table}'";
+
+            SqlCommand command = new SqlCommand(quaryKolvo, databaseClone.getConnection());
+
+            databaseClone.openConnection();
+
+            int length;
+
+            SqlDataReader reader = command.ExecuteReader();
+
+            reader.Read();
+
+            length = reader.GetInt32(0);
+
+            reader.Close();
+
+            databaseClone.closeConnection();
+
+            return length;
+        }
         private void RefreshDataGrid(DataGridView dgw)
         {
             dgw.Rows.Clear();
-
-            string quaryStr = $"select * from Employee";
+            var table = comboBoxTables.Text;
+            string quaryStr = $"select * from {table}";           
 
             SqlCommand command = new SqlCommand(quaryStr, database.getConnection());
-
+            
             database.openConnection();
 
             SqlDataReader reader= command.ExecuteReader();
+                                   
             while (reader.Read())
             {
                 ReadSingleRow(dgw, reader);
@@ -71,10 +149,12 @@ namespace ZooparkForms
             reader.Close();
             database.closeConnection();
         }
-
+        
         private void AdminMenuForm_Load(object sender, EventArgs e)
         {
+
             CreateColumns();
+            createTextBox();
             RefreshDataGrid(dataGridView1);
 
         }
@@ -82,39 +162,93 @@ namespace ZooparkForms
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             selectedRow= e.RowIndex;
+            int length = CountColumns();
 
-            if(e.RowIndex >=0)
-            {
-                DataGridViewRow row= dataGridView1.Rows[selectedRow];
+                if (e.RowIndex >= 0)
+                {
+                    DataGridViewRow row = dataGridView1.Rows[selectedRow];
 
-                  textBox_ID.Text = row.Cells[0].Value.ToString();
-                  textBox_FIO.Text = row.Cells[1].Value.ToString();
-                  textBox_Salarity.Text = row.Cells[2].Value.ToString();
-                  textBox_Sex.Text = row.Cells[3].Value.ToString();
-                  textBox_Age.Text = row.Cells[4].Value.ToString();
-                  textBox_Exp.Text = row.Cells[5].Value.ToString();
-                  textBox_IDjobs.Text = row.Cells[6].Value.ToString();
+                    for (int i = 0; i < length; i++)
+                    {                      
+                        textBoxes[i].Text = row.Cells[i].Value.ToString();
 
-            }
+                    }
+
+                }
         }
 
         private void bnt_refresh_Click(object sender, EventArgs e)
         {
+            CreateColumns();
+            createTextBox();
             RefreshDataGrid(dataGridView1);
         }
 
+       private void createTextBox()
+        {
+            if (textBoxes.Count != 0)
+            {
+                for (int i = 0; i < textBoxes.Count; i++)
+                {
+                    Controls.Remove(textBoxes[i]);
+                    Controls.Remove(lables[i]);
+                }
+                textBoxes.Clear();
+                lables.Clear();
+            }
+            int length = CountColumns();
+            List<string> name = nameColumn();
+            for (int i = 0; i < length; i++)
+            {
+                Label boofL = new Label
+                {
+                    Name = "lable_" + i,
+                    Text = name[i],
+                    Location = new Point(424, 446 + i * 26)
+                };
+                TextBox boofT = new TextBox
+                {
+
+                    Name = "textBox_" + i,
+                    Location = new Point(524, 446 + i * 26),
+                    Height = 20,
+                    Width = 382
+                };
+                Controls.Add(boofL);
+                Controls.Add(boofT);
+                lables.Add(boofL);
+                textBoxes.Add(boofT);
+            }
+            
+        }
         private void btn_add_Click(object sender, EventArgs e)
         {
             database.openConnection();
+            string values="";
+            string column = "";
+            var table = comboBoxTables.Text;
+            for (int i = 1; i < textBoxes.Count; i++)
+            {
+                if (values == "") { 
+                    values = values + " '" + textBoxes[i].Text + "' ";
+                }
+                else { values = values + " , '" + textBoxes[i].Text + "' "; }
+                
 
-            var FIO = textBox_FIO.Text;
-            var Sal = textBox_Salarity.Text;
-            var Sex = textBox_Sex.Text;
-            var Age = textBox_Age.Text;
-            var Exp = textBox_Exp.Text;
-            var IDjobs = textBox_IDjobs.Text;
+            }
 
-            var Addquary = $"insert into Employee ([Full name],Salarity,Sex,Age,Experience,jobID) values ('{FIO}','{Sal}','{Sex}','{Age}','{Exp}','{IDjobs}')";
+            List<string> name = nameColumn();
+            for (int i = 1; i < name.Count; i++)
+            {
+                if (column == "")
+                {
+                    column = column + " [" + name[i] + "] ";
+                }
+                else { column = column + " , [" + name[i] +" ] "; }
+
+
+            }
+            var Addquary = $"insert into {table} ({column}) values ({values})";
             try
             {
                 var command = new SqlCommand(Addquary, database.getConnection());
@@ -132,8 +266,20 @@ namespace ZooparkForms
         private void Search(DataGridView dgw)
         {
             dgw.Rows.Clear();
+            string column = "";
+            List<string> name = nameColumn();
+            var table = comboBoxTables.Text;
 
-            string searchquary = $"select * from Employee where concat (employeeID,[Full name],Salarity,Sex,Age,Experience,jobID) like '%" + textBoxSearch.Text + "%'";
+            for (int i = 1; i < name.Count; i++)
+            {
+                if (column == "")
+                {
+                    column = column + " [" + name[i] + "] ";
+                }
+                else { column = column + " , [" + name[i] + " ] "; }
+            }
+
+            string searchquary = $"select * from {table} where concat ({column}) like '%" + textBoxSearch.Text + "%'";
 
             SqlCommand command = new SqlCommand(searchquary, database.getConnection());
 
@@ -163,46 +309,53 @@ namespace ZooparkForms
             
             if (dataGridView1.Rows[index].Cells[0].Value.ToString()==string.Empty)
             {
-                dataGridView1.Rows[index].Cells[7].Value = RowState.Deleted;
+                dataGridView1.Rows[index].Cells[CountColumns()].Value = RowState.Deleted;
                 return;
             }
-            dataGridView1.Rows[index].Cells[7].Value = RowState.Deleted;
+            dataGridView1.Rows[index].Cells[CountColumns()].Value = RowState.Deleted;
         }
 
         private void updateTable()
         {
             database.openConnection();
 
+            string update = "";
+
+            var table = comboBoxTables.Text;
+            var ID = nameColumn();
             for (int i = 0; i < dataGridView1.Rows.Count; i++)
             {
-                var rowState = (RowState)dataGridView1.Rows[i].Cells[7].Value;
+                var rowState = (RowState)dataGridView1.Rows[i].Cells[CountColumns()].Value;
 
                 if (rowState == RowState.Existed) continue;
 
                 if (rowState == RowState.Deleted)
                 {
-                    var id = Convert.ToInt32(dataGridView1.Rows[i].Cells[0].Value);
                     
-                    var deletequary = $"delete from Employee where employeeID ={id}";
+                    var deletequary = $"delete from {table} where {ID[0]} = '{textBoxes[0].Text}'";
 
                     SqlCommand command= new SqlCommand(deletequary,database.getConnection());
                     command.ExecuteNonQuery();
                 }
                 if (rowState == RowState.Modified)
                 {
-                    var id = textBox_ID.Text;
-                    var FIO = textBox_FIO.Text;
-                    var Sal = textBox_Salarity.Text;
-                    var Sex = textBox_Sex.Text;
-                    var Age = textBox_Age.Text;
-                    var Exp = textBox_Exp.Text;
-                    var IDjobs = textBox_IDjobs.Text;
-
-                    var changequary = $"update Employee set [Full name] = '{FIO}', [Salarity] = '{Sal}', [Sex] = '{Sex}', [Age] = '{Age}', [Experience] = '{Exp}', [jobID] = '{IDjobs}' where employeeID = '{id}'";
+                    
+                    for (int j = 1; j < textBoxes.Count; j++)
+                    {
+                        if (update == "")
+                        {
+                            update = update + " [" + ID[j] + "] = '" + textBoxes[j].Text + "' ";
+                        }
+                        else
+                        {
+                            update = update + " , [" + ID[j] + "] = '" + textBoxes[j].Text + "' ";
+                        }
+                    }
+                    var changequary = $"update {table} set {update} where {ID[0]} = '{textBoxes[0].Text}'";
 
                     var command = new SqlCommand(changequary, database.getConnection());
                     command.ExecuteNonQuery();
-                }
+                     }
             }
             database.closeConnection();
         }
@@ -215,19 +368,24 @@ namespace ZooparkForms
         private void Change()
         {
             var selectRowIndex = dataGridView1.CurrentCell.RowIndex;
-
-            var FIO = textBox_FIO.Text;
-            var Sal = textBox_Salarity.Text;
-            var Sex = textBox_Sex.Text;
-            var Age = textBox_Age.Text;
-            var Exp = textBox_Exp.Text;
-            var IDjobs = textBox_IDjobs.Text;
-
-            if (dataGridView1.Rows[selectRowIndex].Cells[0].Value.ToString()!=string.Empty)
+  
+            DataGridViewRow row = dataGridView1.Rows[selectedRow];
+            object[] values = new object[CountColumns()];
+            for (int i = 0; i < CountColumns(); i++)
             {
-                dataGridView1.Rows[selectRowIndex].SetValues(FIO, Sal, Sex, Age, Exp, IDjobs);
-                dataGridView1.Rows[selectRowIndex].Cells[7].Value = RowState.Modified;
+                values.SetValue(textBoxes[i].Text,i);
             }
+            for (int i = 0; i < CountColumns(); i++)
+            {
+                textBoxes[i].Text = row.Cells[i].Value.ToString();
+                if (dataGridView1.Rows[selectRowIndex].Cells[0].Value.ToString() != string.Empty)
+                {
+                    dataGridView1.Rows[selectRowIndex].SetValues(values);
+                    dataGridView1.Rows[selectRowIndex].Cells[CountColumns()].Value = RowState.Modified;
+                }
+            }
+
+            
         }
 
         private void btn_chang_Click(object sender, EventArgs e)
@@ -235,7 +393,6 @@ namespace ZooparkForms
             Change();
             updateTable();
         }
-
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
