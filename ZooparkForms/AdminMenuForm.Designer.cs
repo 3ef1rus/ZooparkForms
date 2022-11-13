@@ -172,7 +172,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1852, 680);
+            this.ClientSize = new System.Drawing.Size(1328, 680);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.comboBoxTables);
             this.Controls.Add(this.label10);
