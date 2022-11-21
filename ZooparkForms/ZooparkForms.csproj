@@ -53,6 +53,12 @@
       <DependentUpon>AdminMenuForm.cs</DependentUpon>
     </Compile>
     <Compile Include="DataBase.cs" />
+    <Compile Include="quarymenu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="quarymenu.Designer.cs">
+      <DependentUpon>quarymenu.cs</DependentUpon>
+    </Compile>
     <Compile Include="UserMenuForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -80,6 +86,9 @@
     </Compile>
     <EmbeddedResource Include="AdminMenuForm.resx">
       <DependentUpon>AdminMenuForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="quarymenu.resx">
+      <DependentUpon>quarymenu.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserMenuForm.resx">
       <DependentUpon>UserMenuForm.cs</DependentUpon>
