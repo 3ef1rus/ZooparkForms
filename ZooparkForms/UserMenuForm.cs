@@ -248,7 +248,6 @@ namespace ZooparkForms
         private void button1_Click(object sender, EventArgs e)
         {
             quarymenu frmQ = new quarymenu();
-            this.Hide();
             frmQ.ShowDialog();
             this.Show();
         }             

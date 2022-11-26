@@ -36,6 +36,8 @@
             this.bnt_refresh = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.textBoxSearch = new System.Windows.Forms.TextBox();
+            this.textBox_Quary = new System.Windows.Forms.TextBox();
+            this.label2 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -126,11 +128,29 @@
             this.textBoxSearch.Size = new System.Drawing.Size(121, 20);
             this.textBoxSearch.TabIndex = 42;
             // 
+            // textBox_Quary
+            // 
+            this.textBox_Quary.Location = new System.Drawing.Point(735, 578);
+            this.textBox_Quary.Name = "textBox_Quary";
+            this.textBox_Quary.Size = new System.Drawing.Size(190, 20);
+            this.textBox_Quary.TabIndex = 44;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(559, 581);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(162, 13);
+            this.label2.TabIndex = 45;
+            this.label2.Text = "Введите данные для запроса :";
+            // 
             // quarymenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1381, 672);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.textBox_Quary);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.textBoxSearch);
             this.Controls.Add(this.bnt_refresh);
@@ -158,5 +178,7 @@
         private System.Windows.Forms.Button bnt_refresh;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.TextBox textBoxSearch;
+        private System.Windows.Forms.TextBox textBox_Quary;
+        private System.Windows.Forms.Label label2;
     }
 }
