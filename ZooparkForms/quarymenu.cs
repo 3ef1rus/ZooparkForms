@@ -24,7 +24,7 @@ namespace ZooparkForms
         {
             InitializeComponent();
         }
-        private List<string> nameColumn()
+        private List<string> nameColumnList()
         {
             List<string> name=null;
             switch (comboBoxTables.Text)
@@ -88,72 +88,72 @@ namespace ZooparkForms
                     name = "Animal,PassportAnimal,Types,Cells";
                     break;
                 case "5":
-                    name = "Animal,Types,PassportAnimal";
-                    break;
-                case "6":
                     name = "Animal,MedicalCard,Vaccinations,VaccinationsList,PassportAnimal";
                     break;
+                case "6":
+                    name = "Animal,Types,PassportAnimal";
+                    break;
                 case "7":
-                    name = "Full name";
+                    name = "Animal,Types,PassportAnimal";
                     break;
                 case "8":
-                    name = "Full name";
+                    name = "Suppliers";
                     break;
                 case "9":
-                    name = "Full name";
+                    name = "Suppliers,Feeds";
                     break;
                 case "10":
-                    name = "Full name";
+                    name = "Types,FoodTypes";
                     break;
                 case "11":
                     name = "Full name";
                     break;
                 case "12":
-                    name = "Full name";
+                    name = "ZooparkForTrade,Exchanges";
                     break;
             }
             return name;
         }
-        private string Quary()
+        private string selectnameColumn()
         {
             string name = "";
             switch (comboBoxTables.Text)
             {
                 case "1":
-                    name = "use zoopark; EXEC FullEmployee";
+                    name = "Employee.[Full name],[Job]=Jobs.Name,Employee.Experience,Employee.Sex,Employee.Age,Employee.Salarity";
                     break;
                 case "2":
-                    name = "use zoopark; EXEC WhoRes";
+                    name = "Employee.[Full name], PassportAnimal.Name, Responsibility.[Date start],Responsibility.[Date end]";
                     break;
                 case "3":
-                    name = "use zoopark; EXEC HaveAccess";
+                    name = "Employee.[Full name],[Job]=Jobs.Name,Access.[Access],Types.[Name type]";
                     break;
                 case "4":
-                    name = "use zoopark; EXEC FullAnimal";
+                    name = "PassportAnimal.Name,Types.[Name type],Cells.[Number cell],Animal.Hight,Animal.Weigth,PassportAnimal.Sex,PassportAnimal.[Data Birth],Animal.[Date join]";
                     break;
                 case "5":
-                    name = "use zoopark; EXEC NeedWarm";
+                    name = "Animal.Warm,Types.[Name type],[Animal name]=PassportAnimal.Name";
                     break;
                 case "6":
-                    name = "Animal,MedicalCard,Vaccinations,VaccinationsList,PassportAnimal";
+                    name = "Animal.[Date join],PassportAnimal.Sex,PassportAnimal.Childs,[Animal Name]=PassportAnimal.Name, [Date Vaccination]=VaccinationsList.[Date]";
                     break;
                 case "7":
-                    name = "Full name";
+                    name = "[Animal name]=PassportAnimal.Name ,Types.[Name type] , Animal.[Move]";
                     break;
                 case "8":
-                    name = "Full name";
+                    name = "Suppliers.Name,Suppliers.[Type feed],Suppliers.Price, Suppliers.[Delivery period], Suppliers.Amount ";
                     break;
                 case "9":
-                    name = "Full name";
+                    name = "Suppliers.Amount,Feeds.Name";
                     break;
                 case "10":
-                    name = "Full name";
+                    name = "Types.[Name type],FoodTypes.[Food type] ";
                     break;
                 case "11":
                     name = "Full name";
                     break;
                 case "12":
-                    name = "Full name";
+                    name = "Exchanges.[Number exchange],Exchanges.[Date exchange],Exchanges.[Whom give],Exchanges.[Whom take] ,[Zoopark exchange]=ZooparkForTrade.Name ";
                     break;
             }
             return name;
@@ -167,7 +167,7 @@ namespace ZooparkForms
             {
                 dataGridView1.Columns.RemoveAt(0);
             }
-            List<string> name = nameColumn();
+            List<string> name = nameColumnList();
 
             for (int i = 0; i < name.Count; i++)
             {
@@ -176,7 +176,7 @@ namespace ZooparkForms
         }
         private void ReadSingleRow(DataGridView dgw, IDataRecord record)
         {
-            List<string> name = nameColumn();
+            List<string> name = nameColumnList();
             int length=name.Count;
             object[] row1 = new object[length + 1];
 
@@ -203,8 +203,8 @@ namespace ZooparkForms
         private void RefreshDataGrid(DataGridView dgw)
         {
             dgw.Rows.Clear();
-
-            string quaryStr = $"{Quary()}";
+            
+            string quaryStr = $"select {selectnameColumn()} from {nameTable()}";
 
             SqlCommand command = new SqlCommand(quaryStr, database.getConnection());
 
@@ -226,7 +226,7 @@ namespace ZooparkForms
             RefreshDataGrid(dataGridView1);
         }
        
-        private void Search(DataGridView dgw)
+     /*   private void Search(DataGridView dgw)
         {
             dgw.Rows.Clear();
             string column = "";
@@ -242,13 +242,13 @@ namespace ZooparkForms
                 else { column = column + " , [" + name[i] + " ] "; }
             }
 
-           // string searchquary = $"select {nameForSelect()} from {table} where concat ({column}) like '%" + textBoxSearch.Text + "%' ";
+            string searchquary = $"select {nameForSelect()} from {table} where concat ({column}) like '%" + textBoxSearch.Text + "%' ";
 
-          //  SqlCommand command = new SqlCommand(searchquary, database.getConnection());
+            SqlCommand command = new SqlCommand(searchquary, database.getConnection());
 
             database.getConnection();
 
-         //   SqlDataReader reader = command.ExecuteReader();
+            SqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
             {
@@ -257,10 +257,10 @@ namespace ZooparkForms
             reader.Close();
 
             database.closeConnection();
-        }
+        }*/
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
-            Search(dataGridView1);
+           // Search(dataGridView1);
         }
         private void quarymenu_Load(object sender, EventArgs e)
         {
@@ -277,7 +277,7 @@ namespace ZooparkForms
             switch (comboBoxTables.Text)
             {
                 case "1":
-                    label_opis.Text = "Получить список и общее число служащих зоопаpка, либо служащих данной категоpии полностью, по\r\nпродолжительсти pаботы в зоопаpке, по половому пpизнаку, возpасту, pазмеpу заpаботной платы.";
+                    label_opis.Text = "Получить список служащих зоопаpка, по\r\nпродолжительсти pаботы в зоопаpке, по половому пpизнаку, возpасту, pазмеpу заpаботной платы.";
                     break;
                 case "2":
                     label_opis.Text = "Получить перечень и общее число служащих зоопаpка, ответственных за указанный вид животных\r\nлибо за конкpетную особь за все вpемя пpебывания животного в зоопаpке, за указанный пеpиод\r\nвpемени.";
