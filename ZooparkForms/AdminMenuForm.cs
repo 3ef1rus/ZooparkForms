@@ -93,9 +93,15 @@ namespace ZooparkForms
                 }
                 catch
                 {
-                    row1.SetValue(record.GetInt32(i).ToString(), i);
+                    try
+                    {
+                        row1.SetValue(record.GetInt32(i).ToString(), i);
+                    }
+                    catch
+                    {
+                          row1.SetValue(record.GetDateTime(i).ToString(), i);
+                    }
                 }
-
             }
             row1.SetValue(RowState.ModifiedNew, length);
             DataGridViewRow dataGridViewRow = new DataGridViewRow();
@@ -394,6 +400,11 @@ namespace ZooparkForms
             updateTable();
         }
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
 
         }
