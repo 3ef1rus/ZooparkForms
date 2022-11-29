@@ -192,17 +192,17 @@ namespace ZooparkForms
                 {
                     Name = "lable_" + i,
                     Text = name[i],
-                    Location = new Point(dgw.Size.Width * 2, dgw.Size.Height * 3 + i * 26)
+                    Location = new Point(bnt_refresh.Location.X + bnt_refresh.Width + 250, (bnt_refresh.Location.Y + 10) + i * 26)
                 };
                 TextBox boofT = new TextBox
                 {
 
                     Name = "textBox_" + i,
-                    Location = new Point(dgw.Size.Width * 2, dgw.Size.Height * 3 + i * 26),
+                    Location = new Point(boofL.Location.X + boofL.Width + 5, (boofL.Location.Y - 7) + i),
 
                     Height = 20,
                     Width = 382,
-                    TextAlign = HorizontalAlignment.Right
+
                 };
                 Controls.Add(boofL);
                 Controls.Add(boofT);
