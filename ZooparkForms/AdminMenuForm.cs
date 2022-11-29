@@ -93,9 +93,15 @@ namespace ZooparkForms
                 }
                 catch
                 {
-                    row1.SetValue(record.GetInt32(i).ToString(), i);
+                    try
+                    {
+                        row1.SetValue(record.GetInt32(i).ToString(), i);
+                    }
+                    catch
+                    {
+                          row1.SetValue(record.GetDateTime(i).ToString(), i);
+                    }
                 }
-
             }
             row1.SetValue(RowState.ModifiedNew, length);
             DataGridViewRow dataGridViewRow = new DataGridViewRow();

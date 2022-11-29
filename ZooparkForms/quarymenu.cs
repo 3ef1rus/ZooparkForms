@@ -60,7 +60,7 @@ namespace ZooparkForms
                     name = new List<string>() { "Name type", "Food type"};
                     break;
                 case "11":
-                  name = new List<string>() { "Tom", "Bob", "Sam" };
+                  name = new List<string>() { "Hight","Weigth","Name","Data Birth","Date join","Child","Vaccinations","Diseases" };
                     break;
                 case "12":
                     name = new List<string>() { "Number exchange", "Date exchange", "Whom give", "Whom take", "Zoopark exchange" };
@@ -106,7 +106,7 @@ namespace ZooparkForms
                     name = "Types,FoodTypes";
                     break;
                 case "11":
-                    name = "Full name";
+                    name = "Animal,PassportAnimal,MedicalCard";
                     break;
                 case "12":
                     name = "ZooparkForTrade,Exchanges";
@@ -150,7 +150,7 @@ namespace ZooparkForms
                     name = "Types.[Name type],FoodTypes.[Food type] ";
                     break;
                 case "11":
-                    name = "Full name";
+                    name = "Animal.Hight,Animal.Weigth,[Animal name]=PassportAnimal.Name,PassportAnimal.[Data Birth],Animal.[Date join],PassportAnimal.Childs,'',''";
                     break;
                 case "12":
                     name = "Exchanges.[Number exchange],Exchanges.[Date exchange],Exchanges.[Whom give],Exchanges.[Whom take] ,[Zoopark exchange]=ZooparkForTrade.Name ";
@@ -194,7 +194,7 @@ namespace ZooparkForms
                     name = "WHERE FoodTypes.foodTypeID=Types.foodTypeID ";
                     break;
                 case "11":
-                    name = "Full name";
+                    name = "WHERE PassportAnimal.Name='"+ textBox_Quary.Text + "'"+"  AND PassportAnimal.passportAnimaID=Animal.passportAnimaID AND PassportAnimal.MedicalCardID=MedicalCard.medicalCardID UNION all SELECT '','','','','','',Vaccinations.Name as Vaccinations,'' FROM Vaccinations,VaccinationsList,MedicalCard,PassportAnimal WHERE   PassportAnimal.Name='"+ textBox_Quary.Text + "'"+"  AND PassportAnimal.MedicalCardID=MedicalCard.medicalCardID AND MedicalCard.medicalCardID=VaccinationsList.idMedCard AND VaccinationsList.vaccinationID=Vaccinations.vaccinationID UNION all SELECT '','','','','','','',Disease.Name as Diseases FROM Disease,DiseaseList ,MedicalCard,PassportAnimal WHERE PassportAnimal.Name='"+ textBox_Quary.Text + "'"+"  AND PassportAnimal.MedicalCardID=MedicalCard.medicalCardID AND MedicalCard.medicalCardID=DiseaseList.idMedCard AND DiseaseList.diseaseID=Disease.diseaseID";
                     break;
                 case "12":
                     name = "WHERE Exchanges.zooparkID=ZooparkForTrade.zooparkID";
@@ -233,7 +233,14 @@ namespace ZooparkForms
                 }
                 catch
                 {
-                    row1.SetValue(record.GetInt32(i).ToString(), i);
+                    try
+                    {
+                        row1.SetValue(record.GetInt32(i).ToString(), i);
+                    }
+                    catch
+                    {
+                        row1.SetValue(record.GetDateTime(i).ToString(), i);
+                    }
                 }
 
             }
@@ -248,7 +255,9 @@ namespace ZooparkForms
         {
             dgw.Rows.Clear();
             
-            string quaryStr = $"select {selectnameColumn()} from {nameTable()} {quaryWhere()}";
+            string quaryStr = $"select {selectnameColumn()} from {nameTable()} {quaryWhere()}"; 
+   
+
 
             SqlCommand command = new SqlCommand(quaryStr, database.getConnection());
 
@@ -269,12 +278,11 @@ namespace ZooparkForms
             UpdateQuary();
             RefreshDataGrid(dataGridView1);
         }
-       
-     /*   private void Search(DataGridView dgw)
+        private void Search(DataGridView dgw)
         {
             dgw.Rows.Clear();
             string column = "";
-            List<string> name = nameColumn();
+            List<string> name = nameColumnList();
             var table = comboBoxTables.Text;
 
             for (int i = 1; i < name.Count; i++)
@@ -286,7 +294,7 @@ namespace ZooparkForms
                 else { column = column + " , [" + name[i] + " ] "; }
             }
 
-            string searchquary = $"select {nameForSelect()} from {table} where concat ({column}) like '%" + textBoxSearch.Text + "%' ";
+            string searchquary = $"select * from {table} where concat ({column}) like '%" + textBoxSearch.Text + "%'";
 
             SqlCommand command = new SqlCommand(searchquary, database.getConnection());
 
@@ -301,10 +309,10 @@ namespace ZooparkForms
             reader.Close();
 
             database.closeConnection();
-        }*/
+        }
         private void textBoxSearch_TextChanged(object sender, EventArgs e)
         {
-           // Search(dataGridView1);
+           Search(dataGridView1);
         }
         private void quarymenu_Load(object sender, EventArgs e)
         {
@@ -324,7 +332,7 @@ namespace ZooparkForms
                     label_opis.Text = "Получить список служащих зоопаpка, по продолжительсти pаботы в зоопаpке, по половому пpизнаку,\r\n возpасту, pазмеpу заpаботной платы.";
                     break;
                 case "2":
-                    label_opis.Text = "Получить перечень , ответственных за указанный вид животныхлибо за конкpетную особь за все вpемя пpебывания животного в зоопаpке,\r\n за указанный пеpиод\r\nвpемени.";
+                    label_opis.Text = "Получить перечень , ответственных за указанный вид животныхлибо за конкpетную особь за все вpемя пpебывания \r\n животного в зоопаpке, за указанный пеpиод вpемени.";
                     break;
                 case "3":
                     label_opis.Text = "Получить список , имеющих доступ к указанному виду животных либо к конкpетной особи.";
