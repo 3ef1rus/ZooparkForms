@@ -192,7 +192,7 @@ namespace ZooparkForms
                 {
                     Name = "lable_" + i,
                     Text = name[i],
-                    Location = new Point(bnt_refresh.Location.X + bnt_refresh.Width + 250, (bnt_refresh.Location.Y + 10) + i * 26)
+                    Location = new Point(textBoxSearch.Location.X + textBoxSearch.Width+50, (textBoxSearch.Location.Y + 10) + i * 26)
                 };
                 TextBox boofT = new TextBox
                 {
