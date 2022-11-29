@@ -19,7 +19,6 @@ namespace ZooparkForms
     public partial class quarymenu : Form
     {
         Database database = new Database();
-        Database databaseClone = new Database();
         public quarymenu()
         {
             InitializeComponent();

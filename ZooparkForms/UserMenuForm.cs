@@ -185,28 +185,30 @@ namespace ZooparkForms
             }
             int length = CountColumns();
             List<string> name = nameColumn();
+            DataGridView dgw = new DataGridView();
             for (int i = 0; i < length; i++)
             {
                 Label boofL = new Label
                 {
                     Name = "lable_" + i,
                     Text = name[i],
-                    Location = new Point(424, 446 + i * 26)
+                    Location = new Point(dgw.Size.Width * 2, dgw.Size.Height * 3 + i * 26)
                 };
                 TextBox boofT = new TextBox
                 {
 
                     Name = "textBox_" + i,
-                    Location = new Point(524, 446 + i * 26),
+                    Location = new Point(dgw.Size.Width * 2, dgw.Size.Height * 3 + i * 26),
+
                     Height = 20,
-                    Width = 382
+                    Width = 382,
+                    TextAlign = HorizontalAlignment.Right
                 };
                 Controls.Add(boofL);
                 Controls.Add(boofT);
                 lables.Add(boofL);
                 textBoxes.Add(boofT);
             }
-
         }
 
         private void Search(DataGridView dgw)
