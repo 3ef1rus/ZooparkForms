@@ -34,7 +34,11 @@ namespace ZooparkForms
 
             var login = textBoxLoginR.Text;
             var password = textBoxPasswordR.Text;
-
+            if (login == "" || password == "")
+            {
+                MessageBox.Show("Аккаунт не создан");
+                return;
+            }
             string quaryStr = $"insert into Users(login_user,password_user) values('{login}','{password}')";
             
             SqlCommand command= new SqlCommand(quaryStr,database.getConnection());

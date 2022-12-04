@@ -133,14 +133,27 @@ namespace ZooparkForms
 
             database.openConnection();
 
-            SqlDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
+            SqlDataReader reader;
+            try
             {
-                ReadSingleRow(dgw, reader);
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    ReadSingleRow(dgw, reader);
+                }
+                reader.Close();
+
             }
-            reader.Close();
+            catch
+            {
+                MessageBox.Show("Ошибка проверьте корректность ввода");
+                database.closeConnection();
+                return;
+            }
+
             database.closeConnection();
+
+
         }
         private void UserMenuForm_Load(object sender, EventArgs e)
         {

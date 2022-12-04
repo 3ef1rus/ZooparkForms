@@ -145,15 +145,26 @@ namespace ZooparkForms
             SqlCommand command = new SqlCommand(quaryStr, database.getConnection());
             
             database.openConnection();
-
-            SqlDataReader reader= command.ExecuteReader();
-                                   
-            while (reader.Read())
-            {
-                ReadSingleRow(dgw, reader);
+            SqlDataReader reader;
+            try { 
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    ReadSingleRow(dgw, reader);
+                }
+                reader.Close();
+                
             }
-            reader.Close();
+            catch
+            {
+                MessageBox.Show("Ошибка проверьте корректность ввода");
+                database.closeConnection();
+                return;
+            }
+
             database.closeConnection();
+
+
         }
         
         private void AdminMenuForm_Load(object sender, EventArgs e)

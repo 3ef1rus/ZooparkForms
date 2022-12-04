@@ -26,47 +26,49 @@ namespace ZooparkForms
         private List<string> nameColumnList()
         {
             List<string> name=null;
-            switch (comboBoxTables.Text)
-            {
-                case "1":
-                    name = new List<string>() { "Full name", "Job", "Experience", "Sex" , "Age", "Salarity" };
-                    break;
-                case "2":
-                    name = new List<string>() { "Full name", "Name", "Date start" , "Date end" };
-                    break;
-                case "3":
-                    name = new List<string>() { "Full name", "Job", "Access", "Name type" };
-                    break;
-                case "4":
-                    name = new List<string>() { "Animal name", "Name type", "Number cell", "Hight", "Weigth", "Sex", "Data Birth", "Date join" };
-                    break;
-                case "5":
-                    name = new List<string>() { "Warm", "Name type", "Animal name" };
-                    break;
-                case "6":
-                    name = new List<string>() { "Date join", "Sex", "Childs", "Animal Name","Date Vaccination"};
-                    break;
-                case "7":
-                    name = new List<string>() { "Animal name", "Name type", "Move" };
-                    break;
-                case "8":
-                    name = new List<string>() { "Name", "Type feed", "Delivery period", "Amount" };
-                    break;
-                case "9":
-                    name = new List<string>() { "Amount", "Name"};
-                    break;
-                case "10":
-                    name = new List<string>() { "Name type", "Food type"};
-                    break;
-                case "11":
-                  name = new List<string>() { "Hight","Weigth","Name","Data Birth","Date join","Child","Vaccinations","Diseases" };
-                    break;
-                case "12":
-                    name = new List<string>() { "Number exchange", "Date exchange", "Whom give", "Whom take", "Zoopark exchange" };
-                    break;
-            }
-
-
+                switch (comboBoxTables.Text)
+                {
+                    case "1":
+                        name = new List<string>() { "Full name", "Job", "Experience", "Sex", "Age", "Salarity" };
+                        break;
+                    case "2":
+                        name = new List<string>() { "Full name", "Name", "Date start", "Date end" };
+                        break;
+                    case "3":
+                        name = new List<string>() { "Full name", "Job", "Access", "Name type" };
+                        break;
+                    case "4":
+                        name = new List<string>() { "Animal name", "Name type", "Number cell", "Hight", "Weigth", "Sex", "Data Birth", "Date join" };
+                        break;
+                    case "5":
+                        name = new List<string>() { "Warm", "Name type", "Animal name" };
+                        break;
+                    case "6":
+                        name = new List<string>() { "Date join", "Sex", "Childs", "Animal Name", "Date Vaccination" };
+                        break;
+                    case "7":
+                        name = new List<string>() { "Animal name", "Name type", "Move" };
+                        break;
+                    case "8":
+                        name = new List<string>() { "Name", "Type feed", "Delivery period", "Amount" };
+                        break;
+                    case "9":
+                        name = new List<string>() { "Amount", "Name" };
+                        break;
+                    case "10":
+                        name = new List<string>() { "Name type", "Food type" };
+                        break;
+                    case "11":
+                        name = new List<string>() { "Hight", "Weigth", "Name", "Data Birth", "Date join", "Child", "Vaccinations", "Diseases" };
+                        break;
+                    case "12":
+                        name = new List<string>() { "Number exchange", "Date exchange", "Whom give", "Whom take", "Zoopark exchange" };
+                        break;
+                    default:
+                        
+                        name = new List<string>() { "Full name", "Job", "Experience", "Sex", "Age", "Salarity" };
+                        break;
+                }
             return name;
         }
         private string nameTable()
@@ -109,6 +111,10 @@ namespace ZooparkForms
                     break;
                 case "12":
                     name = "ZooparkForTrade,Exchanges";
+                    break;
+                default:
+                    name = "Employee,Jobs";
+                    MessageBox.Show("Ошибка проверьте корректность ввода");
                     break;
             }
             return name;
@@ -154,6 +160,10 @@ namespace ZooparkForms
                 case "12":
                     name = "Exchanges.[Number exchange],Exchanges.[Date exchange],Exchanges.[Whom give],Exchanges.[Whom take] ,[Zoopark exchange]=ZooparkForTrade.Name ";
                     break;
+                default:
+                    
+                    name = "Employee.[Full name],[Job]=Jobs.Name,Employee.Experience,Employee.Sex,Employee.Age,Employee.Salarity";
+                    break;
             }
             return name;
         }
@@ -197,6 +207,10 @@ namespace ZooparkForms
                     break;
                 case "12":
                     name = "WHERE Exchanges.zooparkID=ZooparkForTrade.zooparkID";
+                    break;
+                default:
+                    
+                    name = "WHERE Jobs.jobID=Employee.jobID";
                     break;
             }
             return name;
@@ -362,6 +376,10 @@ namespace ZooparkForms
                     break;
                 case "12":
                     label_opis.Text = "Получить перечень зоопаpков, с котоpыми был пpоизведен обмен животными в целом\r\nили животными только указанного вида.";
+                    break;
+                default:
+                    
+                    label_opis.Text = "Получить список служащих зоопаpка, по продолжительсти pаботы в зоопаpке, по половому пpизнаку,\r\n возpасту, pазмеpу заpаботной платы.";
                     break;
             }
 
